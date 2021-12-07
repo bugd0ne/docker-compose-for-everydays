@@ -1,0 +1,10 @@
+version: '3'
+services:
+  database:
+    image: "postgres:13.2" # use latest official postgres version
+    env_file:
+      - postgresql.env # configure postgres
+    volumes:
+      - ./database-data:/var/lib/postgresql/data
+    ports:
+      - 5437:5432

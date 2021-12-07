@@ -1,0 +1,13 @@
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./jenkins/jenkins_data:/var/jenkins_home
+    networks:
+        - jenkins_network
+
+networks:
+  jenkins_network:
+    driver: bridge
