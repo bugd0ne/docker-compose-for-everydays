@@ -1,0 +1,11 @@
+version: '3.5'
+
+services:
+  service:
+    container_name: redis
+    image: redis:latest
+    volumes:
+      - './data/redis:/redis-data'
+    restart: always
+    ports:
+      - 6379

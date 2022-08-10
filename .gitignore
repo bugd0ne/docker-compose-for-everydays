@@ -1,3 +1,5 @@
 */database-data/*
 */rabbitmq-data/*
 */rabbitmq-log/*
+*/pgadmin-data/*
+*/redis/data/*
