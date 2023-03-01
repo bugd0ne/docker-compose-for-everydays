@@ -3,3 +3,4 @@
 */rabbitmq-log/*
 */pgadmin-data/*
 */redis/data/*
+*/jenkins/*
