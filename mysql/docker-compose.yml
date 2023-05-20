@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  db:
+    container_name: mysql_container
+    image: mysql:latest
+    restart: always
+    env_file:
+      - mysql.env # configure mysql
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ./mysql-data:/var/lib/mysql
