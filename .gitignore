@@ -1,7 +1,8 @@
-*/database-data/*
+*/database-data/
 */rabbitmq-data/*
 */rabbitmq-log/*
 */pgadmin-data/*
 */redis/data/*
-*/jenkins/*
-*/*/*.env
+*/jenkins-data/*
+*/mysql-data/*
+*/*.env
