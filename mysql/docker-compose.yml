@@ -1,5 +1,13 @@
 version: '3.8'
 services:
+
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - 7070:8080  
+  
   db:
     container_name: mysql_container
     image: mysql:latest
