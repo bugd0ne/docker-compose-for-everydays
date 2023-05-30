@@ -5,4 +5,5 @@
 */redis/data/*
 */jenkins-data/*
 */mysql-data/*
+*/beaver-data/*
 */*.env

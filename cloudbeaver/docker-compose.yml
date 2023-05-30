@@ -1,0 +1,10 @@
+version: '3'
+services:
+  beaver:
+    image: "dbeaver/cloudbeaver:latest"
+    restart: unless-stopped
+    volumes:
+      - ./beaver-data:/opt/cloudbeaver/workspace
+    ports:
+      - 8066:8978
+
