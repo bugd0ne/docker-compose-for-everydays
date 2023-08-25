@@ -1,0 +1,10 @@
+version: '3.5'
+
+services:
+  jira:
+    image: atlassian/jira-software:latest
+    volumes:
+      - "./jira-data:/var/atlassian/application-data/jira"
+    ports:
+      - "1488:8080"
+    network_mode: bridge

@@ -1,10 +1,10 @@
-version: '3'
+version: '3.5'
 services:
   database:
-    image: "postgres:14-alpine" # use latest official postgres version
+    image: "postgres:15-alpine" # use latest official postgres version
     env_file:
       - postgresql.env # configure postgres
     volumes:
       - ./database-data:/var/lib/postgresql/data
     ports:
-      - 5437:5432
+      - 5432:5432
