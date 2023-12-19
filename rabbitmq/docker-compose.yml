@@ -9,6 +9,8 @@ services:
     volumes:
         - ./rabbitmq-data/:/var/lib/rabbitmq/
         - ./rabbitmq-log/:/var/log/rabbitmq
+    env_file:
+        - rabbit.env
     networks:
         - rabbitmq_network
 
