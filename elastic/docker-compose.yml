@@ -1,0 +1,15 @@
+services:
+  elasticsearch:
+    image: elasticsearch:8.17.3
+    volumes:
+      - '/opt/services/elasticsearch/elasticdata:/usr/share/elasticsearch/data'
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9201:9200
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    restart: always
