@@ -1,4 +1,4 @@
-*/database-data/
+*/database-data/*
 */rabbitmq-data/*
 */rabbitmq-log/*
 */pgadmin-data/*
@@ -7,3 +7,4 @@
 */mysql-data/*
 */beaver-data/*
 */*.env
+*/elasticdata/*
