@@ -1,13 +1,14 @@
 services:
   elasticsearch:
     image: elasticsearch:8.17.3
+    container_name: elasticsearch_local
     volumes:
-      - '/opt/services/elasticsearch/elasticdata:/usr/share/elasticsearch/data'
+      - './elasticdata:/usr/share/elasticsearch/data'
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
     ports:
-      - 9201:9200
+      - 9292:9200
     deploy:
       resources:
         limits:
