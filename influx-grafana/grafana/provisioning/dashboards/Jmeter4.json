@@ -1,0 +1,802 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_INFLUXDB29AA",
+      "label": "InfluxDB29AA",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.2.0-62263"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Monitor your Apache JMeter load test in real time with InfluxDB and Grafana. Get overall summary, error details and particular transaction response times. A dashboard by Speckyfox Technologies",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": 19857,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 55,
+      "panels": [],
+      "title": "Application statistics influxDB - JMeter",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 38,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {}
+      },
+      "pluginVersion": "10.2.0-62263",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"maxAT\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Number of Users",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "description": "This query is used to analyze and monitor the error rate as a percentage of total events in your performance testing data",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 3,
+        "y": 1
+      },
+      "id": 42,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.2.0-62263",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"transaction\"] == \"all\")\n  |> filter(fn: (r) => r[\"_field\"] =~ /count*/)\n  |> sum()\n  |> pivot(rowKey:[\"_measurement\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({_value: float(v: r.countError) / float(v: r.count) * 100.0}))",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors Rate",
+      "transformations": [],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "description": "This query helps you analyze and monitor the distribution of response codes in your performance testing data. It provides insights into how often each response code occurs over time, which can be useful for identifying patterns and assessing the performance and reliability of your application under various scenarios",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 16,
+        "x": 8,
+        "y": 1
+      },
+      "id": 43,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false
+      },
+      "pluginVersion": "10.2.0-62263",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => exists r[\"responseCode\"])\n  |> group(columns: [\"responseCode\"], mode:\"by\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> count()",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors By Status Codes",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*responseCode=\"([^\"]*).*",
+            "renamePattern": "Error $1"
+          }
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "description": "It calculates the rate of \"count\" events per second over a specified time range and for a specific application with the \"statut\" field set to \"all.\"",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Add User/portal/addusers",
+                  "Add user user",
+                  "Click on Add User icon user",
+                  "Click on Setting sidebar user",
+                  "Click on User sidebar user",
+                  "Click on add user icon User/portal/addusers",
+                  "Latency",
+                  "Launch user",
+                  "Login user",
+                  "Logout user",
+                  "Setting Click/portal/setting",
+                  "Setting Update/portal/setting",
+                  "Update Settings user",
+                  "Update User user",
+                  "click on RM Audit/portal/auditCategory",
+                  "launch/portal/login",
+                  "login/portal/login",
+                  "logout/portal/logout",
+                  "ssa/portal/updateusers/"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 0,
+        "y": 6
+      },
+      "id": 52,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  // |> filter(fn: (r) => r[\"transaction\"] != \"Latency API\" and r[\"transaction\"] != \"Latency\")\n  |> filter(fn: (r) => exists r.statut)\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Individual transactions over time",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*transaction=\"([^\"]*).*",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "description": "This InfluxDB Flux query retrieves 95th percentile performance metrics for a specific application  when the \"statut\" is \"ok.\" It focuses on JMeter measurements within a specified time range and selects only metrics matching the pattern \"/pct95/.\"",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 14,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 13,
+        "y": 6
+      },
+      "id": 47,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"statut\"] == \"ok\")\n  |> filter(fn: (r) => r[\"_field\"] =~ /pct95/)",
+          "refId": "A"
+        }
+      ],
+      "title": "95 Percentiles Over Time (successful responses)",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "/(.*?)\\{|.*transaction=\"([^\"]*).*/g",
+            "renamePattern": "$1$2'"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 13,
+        "x": 0,
+        "y": 14
+      },
+      "id": 46,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\n  |> filter(fn: (r) => r[\"_field\"] == \"avg\")\n  |> filter(fn: (r) => r[\"transaction\"] != \"Latency API\" and r[\"transaction\"] != \"Latency\")\n  |> group(columns: [\"transaction\"], mode: \"by\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Response Times Over Time",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*transaction=\"([^\"]*).*",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB29AA}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "transaction"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 296
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "responseCode"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 450
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 11,
+        "x": 13,
+        "y": 14
+      },
+      "id": 45,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.2.0-62263",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB29AA}"
+          },
+          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"${Measurement}\")\n  |> filter(fn: (r) => r[\"responseMessage\"] != \"\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Details",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "application": true,
+              "count": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "application": 3,
+              "count": 2,
+              "responseCode": 4,
+              "responseMessage": 5,
+              "transaction": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB29AA}"
+        },
+        "definition": "buckets()",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Bucket",
+        "options": [],
+        "query": "buckets()",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB29AA}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.measurements(bucket:\"Grafana\")\r\n  |> keep(columns: [\"_value\"])\r\n  |> group()\r\n  |> distinct(column: \"_value\")\r\n  |> rename(columns: {_value: \"Measurement\"})\r\n",
+        "description": "The measurement acts as a container for tags, fields, and the time column, and the measurement name is the description of the data that are stored in the associated fields. Measurement names are strings, and, for any SQL users out there, a measurement is conceptually similar to a table.\n",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Measurement",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.measurements(bucket:\"Grafana\")\r\n  |> keep(columns: [\"_value\"])\r\n  |> group()\r\n  |> distinct(column: \"_value\")\r\n  |> rename(columns: {_value: \"Measurement\"})\r\n",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now/y",
+    "to": "now/y"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Apache JMeter Grafana Dashboard | SpeckyFox Technologies",
+  "uid": "ea639a10-667e-4524-ab90-06a1630517e34",
+  "version": 2,
+  "weekStart": ""
+}

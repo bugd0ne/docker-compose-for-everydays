@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+  influxdb:
+    image: influxdb:1.11.8
+    ports:
+     - "8086:8086"
+     - 25826:25826/udp
+    networks:
+     - grafana-influxdb-network
+    volumes:
+     - ./influxdb/influx_init.iql:/docker-entrypoint-initdb.d/influx_init.iql
+     - ./influxdb/types.db:/usr/share/collectd/types.db:ro
+     - ./influxdb/data:/var/lib/influxdb
+     - ./influxdb/config/:/etc/influxdb/
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    depends_on:
+      - influxdb
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "3000:3000"
+    env_file:
+      - 'grafana.env'
+    links:
+      - influxdb
+    networks:
+      - grafana-influxdb-network
+
+networks:
+  grafana-influxdb-network:
+    driver: bridge

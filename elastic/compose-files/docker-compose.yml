@@ -1,0 +1,23 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - './elastic_data:/usr/share/elasticsearch/data'
+      - './init-elasticsearch.sh:/usr/local/bin/init-elasticsearch.sh'
+    command: ["sh", "-c", "docker-entrypoint.sh elasticsearch && /usr/local/bin/init-elasticsearch.sh"]
+    user: "1000"
+    ports:
+      - "9200:9200"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
