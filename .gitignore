@@ -9,5 +9,4 @@
 */*.env
 */elastic_data/*
 */minio_data/*
-*/influx-grafana/influxdb/data/*
-*/influx-grafana/influxdb/types.db/*
+**/influx-grafana/influxdb/data/*
