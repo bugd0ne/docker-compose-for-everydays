@@ -1,13 +1,20 @@
-version: "3"
 services:
-  YouTrack:
-    image: jetbrains/youtrack:latest
+  youtrack:
+    image: jetbrains/youtrack:2025.3.110568
     container_name: youtrack
-    restart: always
-    volumes:
-      - ./data:/opt/youtrack/data
-      - ./conf:/opt/youtrack/conf
-      - ./logs:/opt/youtrack/logs
-      - ./backups:/opt/youtrack/backups
     ports:
-      - 8002:8080
+      - "8989:8080"
+    environment:
+      - YOUTRACK_JAVA_OPTS=-Xms2g -Xmx4g
+    volumes:
+      - youtrack-data:/opt/youtrack/data
+      - youtrack-conf:/opt/youtrack/conf
+      - youtrack-logs:/opt/youtrack/logs
+      - youtrack-backups:/opt/youtrack/backups
+    restart: unless-stopped
+
+volumes:
+  youtrack-data:
+  youtrack-conf:
+  youtrack-logs:
+  youtrack-backups:
